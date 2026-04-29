@@ -1,0 +1,64 @@
+body {
+  margin: 0;
+  font-family: "PingFang SC", Arial, sans-serif;
+  background: #f3f4f6;
+}
+
+#app {
+  width: 380px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.hidden { display: none; }
+
+#score {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* ===== 棋盘 ===== */
+#board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 4px;
+  background: #cfd8dc;
+  padding: 6px;
+  border-radius: 14px;
+}
+
+.cell {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.cell.stage-0 { background: #ffffff; }
+.cell.stage-1 { background: #c8e6c9; }
+.cell.stage-2 { background: #388e3c; } /* 深绿 */
+.cell.stage-3 { background: #f48fb1; }
+
+/* 拖拽预览 */
+.cell.preview-ok { outline: 2px solid #66bb6a; }
+.cell.preview-bad { outline: 2px solid #ef5350; }
+
+/* ===== 方块 ===== */
+#pieces {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.piece {
+  display: grid;
+  gap: 4px;
+  padding: 6px;
+  cursor: grab;
+}
+
+.piece-cell {
+  width: 20px;
+  height: 20px;
+  background: #f48fb1;
+  border-radius: 4px;
+}
