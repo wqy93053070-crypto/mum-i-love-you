@@ -1,178 +1,140 @@
-const SIZE = 9;
-let score = 0;
+document.addEventListener("DOMContentLoaded", () => {
 
-const board = Array.from({ length: SIZE }, () =>
-  Array.from({ length: SIZE }, () => ({ stage: 0 }))
-);
+  const startBtn = document.getElementById("start-btn");
+  const speech = document.getElementById("speech");
+  const audio = document.getElementById("pig-audio");
+  const gameContainer = document.getElementById("game-container");
+  const mainStage = document.getElementById("main-stage");
 
-const boardEl = document.getElementById("board");
-const piecesEl = document.getElementById("pieces");
-const scoreEl = document.getElementById("score");
+  const flowerBox = document.getElementById("flower-message");
+  const flowerText = document.getElementById("flower-text");
 
-const gameEl = document.getElementById("game");
-const resultEl = document.getElementById("result");
-const resultTitle = document.getElementById("result-title");
-const resultImg = document.getElementById("result-image");
-const resultText = document.getElementById("result-text");
+  const runners = document.querySelectorAll(".runner");
 
-let draggedShape = null;
-let currentShapes = [];
+  // ✅ 防御：关键元素不存在就停
+  if (!startBtn || !speech || !audio || !gameContainer || !mainStage) {
+    console.warn("关键 DOM 元素不存在，game.js 已停止执行");
+    return;
+  }
 
-const SHAPE_POOL = [
-  [[1]],
-  [[1,1]],
-  [[1,1,1]],
-  [[1,1,1,1]],
-  [[1],[1]],
-  [[1],[1],[1]],
-  [[1,1],[1,1]],
-  [[1,0],[1,0],[1,1]],
-  [[0,1],[0,1],[1,1]],
-  [[1,1,1],[0,1,0]],
-];
+  function isNight() {
+    const h = new Date().getHours();
+    return h >= 19 || h < 5;
+  }
 
-function renderBoard() {
-  boardEl.innerHTML = "";
-  for (let y = 0; y < SIZE; y++) {
-    for (let x = 0; x < SIZE; x++) {
-      const c = document.createElement("div");
-      c.className = `cell stage-${board[y][x].stage}`;
-      c.dataset.x = x;
-      c.dataset.y = y;
-      boardEl.appendChild(c);
+  /* =========================
+     初始化陪伴对白
+  ========================= */
+  speech.innerText = isNight()
+    ? "已经很晚了，我们准备休息吧 🌙"
+    : "白天好，我们一起慢慢玩吧～";
+
+  /* =========================
+     开场：按钮一开始隐藏
+  ========================= */
+  startBtn.classList.add("hidden");
+
+  if (flowerBox) {
+    flowerBox.classList.add("hidden");
+  }
+
+  /* =========================
+     🏃 跑动动画（仪式感）
+     不影响按钮出现
+  ========================= */
+  if (runners.length > 0) {
+    setTimeout(() => {
+      runners.forEach((runner, index) => {
+        runner.classList.add(`r${index + 1}`);
+      });
+    }, 400);
+  }
+
+  /* =========================
+     ✅ 保证按钮一定出现
+  ========================= */
+  setTimeout(() => {
+    startBtn.classList.remove("hidden");
+
+    // 柔和淡入
+    setTimeout(() => {
+      startBtn.classList.add("show");
+    }, 200);
+
+  }, 2600);
+
+  /* =========================
+     点击开始游戏
+  ========================= */
+  startBtn.addEventListener("click", () => {
+
+    // 🔊 音效（必须在点击事件内）
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+
+    if (isNight()) {
+      speech.innerText = "已经很晚了，我们一起休息吧 🌙";
+      return;
     }
-  }
-}
 
-function generatePieces() {
-  piecesEl.innerHTML = "";
-  currentShapes = [];
+    speech.innerText = "太好了，我们去花园看看吧 🌸";
 
-  for (let i = 0; i < 3; i++) {
-    const shape = SHAPE_POOL[Math.floor(Math.random() * SHAPE_POOL.length)];
-    currentShapes.push(shape);
+    // 主画面淡出
+    mainStage.classList.add("fade-out");
 
-    const p = document.createElement("div");
-    p.className = "piece";
-    p.draggable = true;
-    p.style.gridTemplateColumns = `repeat(${shape[0].length},1fr)`;
+    // 隐藏花语（如果上次还在）
+    if (flowerBox) {
+      flowerBox.classList.add("hidden");
+    }
 
-    shape.forEach(r => r.forEach(v => {
-      const c = document.createElement("div");
-      c.className = "piece-cell";
-      if (!v) c.style.visibility = "hidden";
-      p.appendChild(c);
-    }));
-
-    p.addEventListener("dragstart", () => draggedShape = shape);
-    p.addEventListener("dragend", clearPreview);
-
-    piecesEl.appendChild(p);
-  }
-
-  if (isGameOver()) endGame();
-}
-
-/* ===== 拖拽放置 ===== */
-boardEl.addEventListener("dragover", e => {
-  e.preventDefault();
-  if (!draggedShape) return;
-
-  const cell = e.target;
-  if (!cell.classList.contains("cell")) return;
-  preview(Number(cell.dataset.x), Number(cell.dataset.y));
-});
-
-boardEl.addEventListener("drop", e => {
-  e.preventDefault();
-  if (!draggedShape) return;
-
-  const cell = e.target;
-  if (!cell.classList.contains("cell")) return;
-
-  const x = Number(cell.dataset.x);
-  const y = Number(cell.dataset.y);
-
-  if (canPlace(draggedShape, x, y)) {
-    placeShape(draggedShape, x, y);
-    clearAndGrow();
-    scoreEl.innerText = "分数：" + score;
-    renderBoard();
-    generatePieces();
-  }
-
-  draggedShape = null;
-  clearPreview();
-});
-
-/* ===== 逻辑 ===== */
-function canPlace(shape, x, y) {
-  for (let dy=0;dy<shape.length;dy++)
-    for (let dx=0;dx<shape[0].length;dx++)
-      if (shape[dy][dx] && board[y+dy]?.[x+dx]?.stage !== 0) return false;
-  return true;
-}
-
-function placeShape(shape,x,y){
-  shape.forEach((r,dy)=>r.forEach((v,dx)=>{
-    if(v) board[y+dy][x+dx].stage=1;
-  }));
-}
-
-function preview(x,y){
-  clearPreview();
-  const ok = canPlace(draggedShape,x,y);
-  draggedShape.forEach((r,dy)=>r.forEach((v,dx)=>{
-    if(!v)return;
-    const el=[...boardEl.children]
-      .find(c=>c.dataset.x==x+dx && c.dataset.y==y+dy);
-    if(el) el.classList.add(ok?"preview-ok":"preview-bad");
-  }));
-}
-
-function clearPreview(){
-  document.querySelectorAll(".preview-ok,.preview-bad")
-    .forEach(el=>el.classList.remove("preview-ok","preview-bad"));
-}
-
-function clearAndGrow(){
-  const clear=[];
-  for(let y=0;y<SIZE;y++)
-    if(board[y].every(c=>c.stage>0))
-      for(let x=0;x<SIZE;x++) clear.push([x,y]);
-
-  clear.forEach(([x,y])=>{
-    board[y][x].stage=0;
-    score++;
+    // 进入游戏
+    setTimeout(() => {
+      gameContainer.classList.remove("hidden");
+      gameContainer.classList.add("show");
+    }, 800);
   });
-}
 
-function isGameOver(){
-  return currentShapes.every(s=>{
-    for(let y=0;y<SIZE;y++)
-      for(let x=0;x<SIZE;x++)
-        if(canPlace(s,x,y)) return false;
-    return true;
+  /* =========================
+     游戏结束 → 回到主画面 + 花语
+  ========================= */
+  window.addEventListener("message", (e) => {
+    if (e.data && e.data.type === "GAME_OVER") {
+
+      const score = e.data.score;
+
+      // 游戏淡出
+      gameContainer.classList.remove("show");
+
+      setTimeout(() => {
+        gameContainer.classList.add("hidden");
+
+        // 主画面回来
+        mainStage.classList.remove("fade-out");
+
+        /* 🌷 根据结果显示花语 */
+        if (flowerBox && flowerText) {
+
+          let message = "慢慢来，你已经很努力了 🌸";
+
+          if (typeof score === "number") {
+            if (score >= 100) {
+              message = "你今天的表现很耀眼，像盛开的花一样。";
+            } else if (score >= 50) {
+              message = "每一步都算数，小小的坚持也会开花。";
+            } else {
+              message = "种子已经埋下，花会在合适的时候出现 🌱";
+            }
+          }
+
+          flowerText.innerText = message;
+          flowerBox.classList.remove("hidden");
+        }
+
+        // 陪伴对白
+        speech.innerText = "今天的花园之旅结束了 🌷";
+
+      }, 600);
+    }
   });
-}
 
-function endGame(){
-  gameEl.classList.add("hidden");
-  resultEl.classList.remove("hidden");
-  if(score>=300){
-    resultTitle.innerText="花开了 🌸";
-    resultText.innerText="谢谢你，慢慢来，一切都会好的。";
-  }else{
-    resultTitle.innerText="还没开花 🌿";
-    resultText.innerText="消除得太少了。";
-  }
-}
-
-window.parent.postMessage(
-  { type: "GAME_OVER", score },
-  "*"
-);
-
-/* ===== 初始化 ===== */
-renderBoard();
-generatePieces();
+});

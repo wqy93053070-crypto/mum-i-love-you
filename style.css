@@ -1,64 +1,263 @@
 body {
   margin: 0;
-  font-family: "PingFang SC", Arial, sans-serif;
-  background: #f3f4f6;
+  font-family: "PingFang SC", sans-serif;
+  background: #fdecef;
+  overflow: hidden;
 }
 
-#app {
-  width: 380px;
-  margin: 20px auto;
-  text-align: center;
+/* ❤️ 爱心背景 */
+.hearts {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.hidden { display: none; }
-
-#score {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-/* ===== 棋盘 ===== */
-#board {
-  display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  gap: 4px;
-  background: #cfd8dc;
-  padding: 6px;
-  border-radius: 14px;
-}
-
-.cell {
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
-}
-
-.cell.stage-0 { background: #ffffff; }
-.cell.stage-1 { background: #c8e6c9; }
-.cell.stage-2 { background: #388e3c; } /* 深绿 */
-.cell.stage-3 { background: #f48fb1; }
-
-/* 拖拽预览 */
-.cell.preview-ok { outline: 2px solid #66bb6a; }
-.cell.preview-bad { outline: 2px solid #ef5350; }
-
-/* ===== 方块 ===== */
-#pieces {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.piece {
-  display: grid;
-  gap: 4px;
-  padding: 6px;
-  cursor: grab;
-}
-
-.piece-cell {
-  width: 20px;
-  height: 20px;
+.hearts span {
+  position: absolute;
+  bottom: -40px;
+  width: 18px;
+  height: 18px;
   background: #f48fb1;
-  border-radius: 4px;
+  transform: rotate(45deg);
+  animation: floatUp linear infinite;
+}
+
+.hearts span::before,
+.hearts span::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: #f48fb1;
+  border-radius: 50%;
+}
+
+.hearts span::before { left: -9px; }
+.hearts span::after  { top: -9px; }
+
+.hearts span:nth-child(1){ left:10%; animation-duration:6s;}
+.hearts span:nth-child(2){ left:20%; animation-duration:8s;}
+.hearts span:nth-child(3){ left:30%; animation-duration:7s;}
+.hearts span:nth-child(4){ left:40%; animation-duration:9s;}
+.hearts span:nth-child(5){ left:50%; animation-duration:6.5s;}
+.hearts span:nth-child(6){ left:60%; animation-duration:8.5s;}
+.hearts span:nth-child(7){ left:70%; animation-duration:7.5s;}
+.hearts span:nth-child(8){ left:80%; animation-duration:6s;}
+.hearts span:nth-child(9){ left:90%; animation-duration:9s;}
+.hearts span:nth-child(10){ left:45%; animation-duration:7s;}
+
+@keyframes floatUp {
+  from { transform: translateY(0) rotate(45deg); opacity: 1; }
+  to   { transform: translateY(-120vh) rotate(45deg); opacity: 0; }
+}
+
+/* 🌸 主舞台 */
+#app {
+  position: relative;
+  z-index: 2;
+}
+
+#main-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* 卡片 */
+.card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,.15);
+}
+
+.line {
+  font-size: 22px;
+  color: #e57399;
+  margin: 8px 0;
+}
+
+.main-img {
+  width: 200px;
+  margin: 16px auto;
+  display: block;
+}
+
+/* 🏃 跑动容器（卡片内） */
+.runner-layer {
+  position: relative;
+  height: 60px;
+  margin: 12px 0 6px;
+  overflow: hidden;
+}
+
+/* 跑动角色（只属于卡片） */
+.runner {
+  position: absolute;
+  left: -60px;
+  top: 10px;
+  width: 40px;
+  opacity: 0;
+  z-index: 1;
+}
+
+/* 跑动动画 */
+@keyframes runAcross {
+  from { left: -60px; opacity: 1; }
+  to   { left: 100%; opacity: 1; }
+}
+
+.runner.r1 { animation: runAcross 1.5s linear forwards; }
+.runner.r2 { animation: runAcross 1.5s linear forwards; animation-delay: .4s; }
+.runner.r3 { animation: runAcross 1.5s linear forwards; animation-delay: .8s; }
+
+/* 开始按钮 */
+.start-btn {
+  margin-top: 12px;
+  padding: 12px 36px;
+  border-radius: 24px;
+  border: none;
+  background: #f48fb1;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+/* 🐒🐷🐲 左下角陪伴区 */
+#companion {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  z-index: 100;
+}
+
+#companion img {
+  width: 40px;
+  height: auto;
+}
+
+#speech {
+  background: #fff;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+/* 🎮 游戏 iframe */
+#game-container {
+  position: fixed;
+  inset: 0;
+  background: #f3f4f6;
+  z-index: 200;
+}
+
+#game-container.hidden {
+  display: none;
+}
+
+#game-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+/* 🌫 淡出主画面 */
+.fade-out {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+/* iframe 初始状态：透明 */
+#game-container {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+/* iframe 淡入 */
+#game-container.show {
+  opacity: 1;
+}
+/* 🏃 跑动动画（带减速） */
+@keyframes runAcrossSoft {
+  0% {
+    left: -60px;
+    opacity: 1;
+  }
+  70% {
+    left: 65%;
+    opacity: 1;
+  }
+  100% {
+    left: 75%;
+    opacity: 1;
+  }
+}
+
+/* 覆盖原本的直线跑动 */
+.runner.r1 {
+  animation: runAcrossSoft 1.6s ease-out forwards;
+}
+
+.runner.r2 {
+  animation: runAcrossSoft 1.6s ease-out forwards;
+  animation-delay: .3s;
+}
+
+.runner.r3 {
+  animation: runAcrossSoft 1.6s ease-out forwards;
+  animation-delay: .6s;
+}
+
+/* 🌸 按钮淡入 */
+.start-btn {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.start-btn.show {
+  opacity: 1;
+}
+/* 🌸 花语区 */
+.flower-message {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #fff5f8;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  animation: fadeInUp 0.8s ease;
+}
+
+.flower-title {
+  font-size: 16px;
+  color: #e57399;
+  margin-bottom: 6px;
+}
+
+.flower-text {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
