@@ -1,0 +1,80 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: "PingFang SC", Arial, sans-serif;
+  background: #fdecef;
+}
+
+/* ❤️ 爱心背景 */
+.hearts span {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: pink;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+/* 主容器 */
+#app {
+  min-height: 100vh;
+  text-align: center;
+  padding-top: 40px;
+}
+
+/* 卡片 */
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  width: 280px;
+  margin: 0 auto;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.line {
+  color: #ff6f91;
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.main-img {
+  width: 140px;
+  margin: 16px auto;
+  display: block;
+}
+
+/* ✅ 开始按钮：强制可见 */
+.start-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 0;
+  margin-top: 16px;
+  background: #ff80ab;
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 18px;
+}
+
+/* 左下角陪伴 */
+#companion {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  text-align: left;
+}
+
+#speech {
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
