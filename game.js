@@ -1,0 +1,121 @@
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ✅ 正确取得 DOM */
+  const startBtn = document.getElementById("start-btn");
+  const speech = document.getElementById("speech");
+  const audio = document.getElementById("pig-audio");
+  const gameContainer = document.getElementById("game-container");
+  const mainStage = document.getElementById("main-stage");
+
+  const flowerBox = document.getElementById("flower-message");
+  const flowerText = document.getElementById("flower-text");
+  const runners = document.querySelectorAll(".runner");
+
+  /* ✅ 防御：关键元素不存在就停止 */
+  if (!startBtn || !speech || !audio || !gameContainer || !mainStage) {
+    console.warn("关键 DOM 元素不存在，主页 game.js 未执行");
+    return;
+  }
+
+  function isNight() {
+    const h = new Date().getHours();
+    return h >= 19 || h < 5;
+  }
+
+  /* =========================
+     初始化对白
+  ========================= */
+  speech.innerText = isNight()
+    ? "已经很晚了，我们慢慢玩一会儿吧 🌙"
+    : "白天好，我们一起慢慢玩吧～";
+
+  /* =========================
+     初始状态
+  ========================= */
+  startBtn.classList.add("hidden");
+  if (flowerBox) flowerBox.classList.add("hidden");
+
+  /* =========================
+     跑动动画
+  ========================= */
+  if (runners.length > 0) {
+    setTimeout(() => {
+      runners.forEach((runner, i) => {
+        runner.classList.add(`r${i + 1}`);
+      });
+    }, 400);
+  }
+
+  /* =========================
+     确保按钮出现
+  ========================= */
+  setTimeout(() => {
+    startBtn.classList.remove("hidden");
+    setTimeout(() => {
+      startBtn.classList.add("show");
+    }, 200);
+  }, 2600);
+
+  /* =========================
+     ✅ 点击开始游戏
+  ========================= */
+  startBtn.addEventListener("click", () => {
+
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+
+    if (isNight()) {
+      speech.innerText = "夜晚的花园很安静，我们轻轻玩 🌙";
+    } else {
+      speech.innerText = "太好了，我们去花园看看吧 🌸";
+    }
+
+    /* ✅ 主舞台彻底隐藏 */
+    mainStage.classList.add("fade-out");
+
+    if (flowerBox) flowerBox.classList.add("hidden");
+
+    /* ✅ 显示游戏（iframe） */
+    setTimeout(() => {
+      gameContainer.classList.remove("hidden");
+      gameContainer.classList.add("show");
+    }, 800);
+  });
+
+  /* =========================
+     接收游戏结束事件
+  ========================= */
+  window.addEventListener("message", (e) => {
+    if (e.data && e.data.type === "GAME_OVER") {
+
+      const score = e.data.score;
+      gameContainer.classList.remove("show");
+
+      setTimeout(() => {
+        gameContainer.classList.add("hidden");
+        mainStage.classList.remove("fade-out");
+
+        if (flowerBox && flowerText) {
+          let message = "慢慢来，你已经很努力了 🌸";
+
+          if (typeof score === "number") {
+            if (score >= 100) {
+              message = "你今天的表现很耀眼，像盛开的花一样。";
+            } else if (score >= 50) {
+              message = "每一步都算数，小小的坚持也会开花。";
+            } else {
+              message = "种子已经埋下，花会在合适的时候出现 🌱";
+            }
+          }
+
+          flowerText.innerText = message;
+          flowerBox.classList.remove("hidden");
+        }
+
+        speech.innerText = "今天的花园之旅结束了 🌷";
+      }, 600);
+    }
+  });
+
+});
+``
