@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  font-family: "PingFang SC", Arial, sans-serif;
+  background: #fdecef;
+  text-align: center;
+}
+
+.card {
+  background: white;
+  width: 280px;
+  margin: 80px auto;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.line {
+  color: #ff6f91;
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.main-img {
+  width: 140px;
+  margin: 20px auto;
+  display: block;
+}
+
+.start-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 20px;
+  border: none;
+  background: #ff80ab;
+  color: white;
+}
+``
