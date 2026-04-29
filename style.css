@@ -1,0 +1,91 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: "PingFang SC", Arial, sans-serif;
+  background: #fdecef;
+}
+
+/* ❤️ 爱心背景 */
+.hearts span {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: pink;
+  border-radius: 50%;
+  opacity: 0.4;
+}
+
+/* 主容器 */
+#app {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 主舞台 */
+#main-stage {
+  position: relative;
+  z-index: 10;
+}
+
+/* 卡片 */
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  width: 280px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.line {
+  color: #ff6f91;
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.main-img {
+  width: 140px;
+  margin: 16px auto;
+  display: block;
+}
+
+/* ✅ 开始按钮（明确可见） */
+.start-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px 0;
+  background: #ff80ab;
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* 左下角陪伴 */
+#companion {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 20;
+}
+
+#companion img {
+  width: 64px;
+}
+
+#speech {
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
