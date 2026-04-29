@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <title>妮妮，你愿意嫁给我吗？</title>
+
+  <!-- ✅ 正确加载 CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <script>
+    function fixViewport() {
+      const h = window.innerHeight;
+      document.documentElement.style.height = h + 'px';
+      document.body.style.height = h + 'px';
+    }
+    window.addEventListener('load', fixViewport);
+    window.addEventListener('resize', () => {
+      setTimeout(fixViewport, 50);
+    });
+  </script>
+</head>
+
+<body>
+
+<!-- 爱心背景 -->
+<div class="hearts">
+  <span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div id="app">
+
+  <div id="main-stage">
+    <div class="card">
+
+      <p class="line">妮妮，</p>
+      <p class="line">你愿意嫁给我吗？</p>
+
+      <img src="assets/images/intro-love.png" class="main-img" alt="">
+
+      <div class="runner-layer">
+        <img src="assets/images/monkey.png" class="runner" alt="">
+        <img src="assets/images/pig.png" class="runner" alt="">
+        <img src="assets/images/dragon.png" class="runner" alt="">
+      </div>
+
+      <!-- ✅ 开始游戏按钮 -->
+      <button class="start-btn" onclick="startGame()">
+        开始游戏
+      </button>
+
+    </div>
+  </div>
+
+  <div id="companion">
+    <div id="speech"></div>
+    <img src="assets/images/monkey.png" alt="">
+    <img src="assets/images/pig.png" alt="">
+    <img src="assets/images/dragon.png" alt="">
+  </div>
+
+</div>
+
+<!-- 音效 -->
+<audio id="pig-audio" src="assets/audio/pig-voice.mp3" preload="auto"></audio>
+
+<script>
+  function isNight() {
+    const h = new Date().getHours();
+    return h >= 19 || h < 5;
+  }
+
+  const speech = document.getElementById("speech");
+  const audio = document.getElementById("pig-audio");
+  const mainStage = document.getElementById("main-stage");
+
+  speech.innerText = isNight()
+    ? "夜晚的花园很安静，我们轻轻玩一会儿吧 🌙"
+    : "白天好，我们一起慢慢玩吧～";
+
+  function startGame() {
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+
+    speech.innerText = isNight()
+      ? "夜色很温柔，我们出发吧 🌙"
+      : "太好了，我们去花园看看吧 🌸";
+
+    mainStage.style.opacity = "0";
+    mainStage.style.pointerEvents = "none";
+
+    setTimeout(() => {
+      window.location.href = "/mum-i-love-you/m8-game-test/";
+    }, 600);
+  }
+</script>
+
+</body>
+</html>
+``
